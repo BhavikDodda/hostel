@@ -18,10 +18,16 @@ interface GraphVisualizationProps {
 
 const GraphVisualization: React.FC<GraphVisualizationProps> = ({ graphData }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [graphDimensions, setGraphDimensions] = useState({ width: window.innerWidth-96, height: 450 });
+  const [graphDimensions, setGraphDimensions] = useState({ width: 800, height: 450 });
 
   
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+        setGraphDimensions({
+            width: window.innerWidth-96,
+            height: 450
+        });
+    }
     const updateDimensions = () => {
       if (containerRef.current) {
         setGraphDimensions({
