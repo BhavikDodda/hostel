@@ -110,6 +110,7 @@ export default function Home() {
       console.log(response)
       
       const { allocation, oldcost, newcost, completeGraphData } = await response.json();
+      console.log(allocation)
       setOutput(allocation);
       setnewcost(newcost);
       setoldcost(oldcost);
@@ -142,6 +143,13 @@ export default function Home() {
       return randomPrefs;
     });
     setPreferences(newPreferences);
+  };
+  const finalAllotments = output ? Object.keys(output).sort((a, b) => output[a] - output[b]): [];
+  const differenceInPreference = (initialRoom: number, finalRoom: number, personIndex: number) => {
+    const initialPreference = preferences[personIndex].split(',').map(num => parseInt(num.trim()));
+    const initialRoomIndex = initialPreference.indexOf(initialRoom);
+    const finalRoomIndex = initialPreference.indexOf(finalRoom);
+    return initialRoomIndex - finalRoomIndex;
   };
 
   return (
@@ -263,6 +271,35 @@ export default function Home() {
           {output ? <pre>{'Rooms: People\n'+JSON.stringify(output, null, 2)+'\nOld Cost before TTC: '+oldcost+'\nNew Cost after TTC: '+newcost}</pre> : <p>No results yet</p>}
         </div>
       </div>
+      <div className="my-8">
+        <h2 className="text-xl font-bold mb-4">Allocation Table</h2>
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white dark:bg-gray-800 rounded shadow-md">
+            <thead>
+              <tr>
+                <th className="px-4 py-2 border-b font-medium text-gray-600 dark:text-gray-300">Person</th>
+                <th className="px-4 py-2 border-b font-medium text-gray-600 dark:text-gray-300">Initial Allotted Room</th>
+                <th className="px-4 py-2 border-b font-medium text-gray-600 dark:text-gray-300">Final Allotted Room</th>
+                <th className="px-4 py-2 border-b font-medium text-gray-600 dark:text-gray-300">Improvement in Preference</th>
+              </tr>
+            </thead>
+            <tbody>
+              {finalAllotments.map((finalRoom, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-2 border-b text-center">{index + 1}</td>
+                    <td className="px-4 py-2 border-b text-center">{roomAllotments[index]}</td>
+                    <td className="px-4 py-2 border-b text-center">{finalRoom}</td>
+                    <td className="px-4 py-2 border-b text-center">
+                      {differenceInPreference(roomAllotments[index], Number(finalRoom), index)}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
       <div className="my-8 text-center">
         <p className="text-sm font-light">
           Made with ❤️ by Bhavik Dodda. &copy; {new Date().getFullYear()}
