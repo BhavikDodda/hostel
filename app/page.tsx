@@ -263,7 +263,11 @@ export default function Home() {
           {output ? <pre>{'Rooms: People\n'+JSON.stringify(output, null, 2)+'\nOld Cost before TTC: '+oldcost+'\nNew Cost after TTC: '+newcost}</pre> : <p>No results yet</p>}
         </div>
       </div>
-
+      <div className="my-8 text-center">
+        <p className="text-sm font-light">
+          Made with ❤️ by Bhavik Dodda. &copy; {new Date().getFullYear()}
+        </p>
+      </div>
       
     </div>
   );
