@@ -48,7 +48,7 @@ def shuffleAllot(allot,prefList,cycleList):
         for personslist in prefList:
             newprefList.append((personslist[0],list(filter(filter1,personslist[1]))))
         prefList=newprefList
-        return prefList
+    return prefList
         
 def cost(allot0,pref0):
     score=0
@@ -57,13 +57,22 @@ def cost(allot0,pref0):
         score+=[item for item in pref0 if item[0]==person][0][1].index(room)
     return score
 
+def nodesAndLinksTTC(prefList,allot):
+    nodes = [{"id": person, "name": "Person "+str(person)} for person,prefs in prefList]
+    links = [{"source": person, "target": allot[prefs[0]]} for person,prefs in prefList]
+    return {'nodes':nodes,'links':links}
+
+
 def Result(initialallot,preflist):
     allot=initialallot
     prefList=preflist
+    completeNodesAndLinksData=[]
 
     pplleft=(set(allot.values()))
     origpref=prefList
     while len(prefList)>0:
+        completeNodesAndLinksData.append(nodesAndLinksTTC(prefList,allot))
+
         cycLi=findCycle(allot,prefList,pplleft)
         if len(cycLi)==0:
             break
@@ -74,7 +83,9 @@ def Result(initialallot,preflist):
         print("(rooms,people)")
         print(allot)
         print("cost: ",cost(allot,origpref),"\n\n")
-        return ({'finalAllot':allot})
+        
+    completeNodesAndLinksData.append(nodesAndLinksTTC(origpref,allot))
+    return ({'finalAllot':allot,'completeGraphData':completeNodesAndLinksData})
 
 ####
 
@@ -97,13 +108,12 @@ def run_ttc():
     #
     originalAssignment=room_assignment.copy()
     Answer=Result(room_assignment,prefList)
-    graph_data = [{"from": i, "to": None} for i in range(len(preferences))]
-    detected_cycles = [[i] for i in range(len(preferences))]
 
     return jsonify({
         "oldcost": cost(originalAssignment,prefList),
         "allocation": Answer['finalAllot'],
         "newcost": cost(Answer['finalAllot'],prefList),
+        "completeGraphData": Answer['completeGraphData']
     })
 
 @app.route("/api/python")

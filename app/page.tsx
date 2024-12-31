@@ -1,24 +1,65 @@
 'use client';
 
 import { useState, useEffect } from "react";
+import GraphVisualization from "@/components/GraphVisualization";
+
 
 export default function Home() {
-  const [rooms, setRooms] = useState(0);
-  const [preferences, setPreferences] = useState<string[]>([]);
-  const [roomAllotments, setRoomAllotments] = useState<number[]>([]);
-  const [graph, setGraph] = useState<{ from: number; to: number | undefined }[]>([]);
+  const [rooms, setRooms] = useState(1);
+  const [preferences, setPreferences] = useState<string[]>([""]);
+  const [roomAllotments, setRoomAllotments] = useState<number[]>([0]);
+  const [graphData, setGraphData] = useState({ nodes: [], links: [] });
   const [output, setOutput] = useState<any>(null);
   const [darkMode, setDarkMode] = useState(true);
   const [oldcost, setoldcost] = useState(0);
   const [newcost, setnewcost] = useState(0);
+  const [completeGraphData, setCompleteGraphData] = useState<any[]>([]);
+  const [currentGraphIndex, setCurrentGraphIndex] = useState(0);
+
 
   useEffect(() => {
-    document.documentElement.classList.add("dark"); // Apply the "dark" class on initial load
+    document.documentElement.classList.add("dark");
   }, []);
+
+
+  useEffect(() => {
+    if (completeGraphData.length > 0) {
+      setGraphData(completeGraphData[currentGraphIndex]);
+    }
+  }, [currentGraphIndex, completeGraphData]);
+
+  const handleRoomsChange = (value: string) => {
+    if (value === "" || /^[0-9]+$/.test(value)) {
+      const newRoomCount = value === "" ? 0 : Number(value);
+      setRooms(newRoomCount);
+  
+      if (newRoomCount > preferences.length) {
+        const newEntries = newRoomCount - preferences.length;
+        setPreferences([...preferences, ...Array(newEntries).fill("")]);
+        setRoomAllotments([...roomAllotments, ...Array(newEntries).fill(0)]);
+      } else if (newRoomCount < preferences.length) {
+        setPreferences(preferences.slice(0, newRoomCount));
+        setRoomAllotments(roomAllotments.slice(0, newRoomCount));
+      }
+    }
+  };
+  
+  const handleRoomsBlur = () => {
+    if (rooms < 1) {
+      setRooms(1);
+      if (preferences.length < 1) {
+        setPreferences([""]);
+        setRoomAllotments([0]);
+      }
+    }
+  };
+  
 
   const handleAddPreference = () => {
     setPreferences([...preferences, ""]);
-    setRoomAllotments([...roomAllotments, 0]); // Add a default room allotment
+    setRoomAllotments([...roomAllotments, 0]);
+    const newRoomCount = rooms+1;
+    setRooms(newRoomCount);
   };
 
   const handlePreferenceChange = (index: number, value: string) => {
@@ -31,6 +72,18 @@ export default function Home() {
     const updatedAllotments = [...roomAllotments];
     updatedAllotments[index] = parseInt(value.trim(), 10) || 0;
     setRoomAllotments(updatedAllotments);
+  };
+
+  const handleNextGraph = () => {
+    if (currentGraphIndex < completeGraphData.length - 1) {
+      setCurrentGraphIndex(currentGraphIndex + 1);
+    }
+  };
+  
+  const handlePreviousGraph = () => {
+    if (currentGraphIndex > 0) {
+      setCurrentGraphIndex(currentGraphIndex - 1);
+    }
   };
 
   const handleSubmit = async () => {
@@ -51,16 +104,18 @@ export default function Home() {
         body: JSON.stringify({
           rooms,
           preferences: parsedPreferences,
-          roomAllot: roomAllotments, // Include room allotments in the API call
+          roomAllot: roomAllotments,
         }),
       });
       console.log(response)
       
-      const { allocation, oldcost, newcost } = await response.json();
-      console.log(allocation)
+      const { allocation, oldcost, newcost, completeGraphData } = await response.json();
       setOutput(allocation);
       setnewcost(newcost);
       setoldcost(oldcost);
+      console.log(completeGraphData)
+      setCompleteGraphData(completeGraphData);
+      setCurrentGraphIndex(0);
     } catch (error) {
       console.error("Error fetching TTC results:", error);
     }
@@ -71,9 +126,37 @@ export default function Home() {
     document.documentElement.classList.toggle("dark", !darkMode);
   };
 
+  const randomRoomAllot = () => {
+    if (rooms > 0) {
+      const shuffledRooms = Array.from({ length: rooms }, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+      setRoomAllotments(shuffledRooms);
+    }
+  };
+
+  const randomPreferences = () => {
+    const newPreferences = Array.from({ length: rooms }, () => {
+      const randomPrefs = Array.from({ length: rooms }, (_, i) => i + 1)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, rooms)
+        .join(",");
+      return randomPrefs;
+    });
+    setPreferences(newPreferences);
+  };
+
   return (
+  
+    
+     
+
     <div className={`p-8 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
-      <h1 className="text-3xl font-bold mb-4">Top Trading Cycle Visualization</h1>
+      <div className="flex items-center mb-4">
+        {/* Logo Image */}
+        {darkMode?<img src="/logodark2.png" alt="Logo" className="h-12 w-12 mr-2" />:<img src="/logo.png" alt="Logo" className="h-12 w-12 mr-2" />}
+
+        {/* Title */}
+        <h1 className="text-3xl font-bold">Top Trading Cycle Visualization</h1>
+      </div>
 
       {/* Dark Mode Toggle Button */}
       <button
@@ -87,8 +170,9 @@ export default function Home() {
         <label className="block mb-1">Number of Rooms:</label>
         <input
           type="number"
-          value={rooms}
-          onChange={(e) => setRooms(Number(e.target.value))}
+          value={rooms === 0 ? "" : rooms}
+          onChange={(e) => handleRoomsChange(e.target.value)}
+          onBlur={handleRoomsBlur}
           className="border p-2 rounded w-full bg-gray-50 dark:bg-gray-800 dark:text-white"
         />
       </div>
@@ -131,12 +215,56 @@ export default function Home() {
         Run TTC
       </button>
 
+      <div className="mt-4">
+        <button
+          onClick={randomRoomAllot}
+          className="bg-purple-500 text-white px-4 py-2 rounded dark:bg-purple-700 dark:text-white mr-4"
+        >
+          Random Room Allot
+        </button>
+        <button
+          onClick={randomPreferences}
+          className="bg-yellow-500 text-white px-4 py-2 rounded dark:bg-yellow-700 dark:text-white"
+        >
+          Random Preferences
+        </button>
+      </div>
+
+      <div className="my-8">
+        <h2 className="text-xl font-bold mb-4">Graph Visualization</h2>
+        <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded">
+          <GraphVisualization graphData={graphData} />
+        </div>
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={handlePreviousGraph}
+            disabled={currentGraphIndex === 0}
+            className={`px-4 py-2 mr-2 rounded ${
+              currentGraphIndex === 0 ? "bg-gray-400" : "bg-blue-500 text-white"
+            }`}
+          >
+            Previous
+          </button>
+          <button
+            onClick={handleNextGraph}
+            disabled={currentGraphIndex === completeGraphData.length - 1}
+            className={`px-4 py-2 rounded ${
+              currentGraphIndex === completeGraphData.length - 1 ? "bg-gray-400" : "bg-blue-500 text-white"
+            }`}
+          >
+            Next
+          </button>
+        </div>
+      </div>
+
       <div className="my-8">
         <h2 className="text-xl font-bold mb-4">Output</h2>
         <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded">
-          {output ? <pre>{JSON.stringify(output, null, 2)+'\nOld Cost before TTC: '+oldcost+'\nNew Cost after TTC: '+newcost}</pre> : <p>No results yet</p>}
+          {output ? <pre>{'Rooms: People\n'+JSON.stringify(output, null, 2)+'\nOld Cost before TTC: '+oldcost+'\nNew Cost after TTC: '+newcost}</pre> : <p>No results yet</p>}
         </div>
       </div>
+
+      
     </div>
   );
 }
