@@ -187,16 +187,16 @@ export default function Home() {
         {preferences.map((pref, index) => (
           <div key={index} className="my-2 flex items-center gap-4">
             <div>
-              <label className="block mb-1">Room Allotment (Person {index + 1}):</label>
+              <label className="block mb-1">Room Allotted (Person {index + 1}):</label>
               <input
                 type="number"
                 value={roomAllotments[index]}
                 onChange={(e) => handleRoomAllotmentChange(index, e.target.value)}
-                className="border p-2 rounded bg-gray-50 dark:bg-gray-800 dark:text-white"
+                className="border p-2 rounded w-full bg-gray-50 dark:bg-gray-800 dark:text-white"
               />
             </div>
             <div>
-              <label className="block mb-1">Person {index + 1} Preferences:</label>
+              <label className="block mb-1">Preference List (Person {index + 1}):</label>
               <input
                 type="text"
                 value={pref}
@@ -215,18 +215,18 @@ export default function Home() {
         Run TTC
       </button>
 
-      <div className="mt-4">
+      <div className="mt-4 flex flex-wrap gap-4 justify-left">
         <button
           onClick={randomRoomAllot}
-          className="bg-purple-500 text-white px-4 py-2 rounded dark:bg-purple-700 dark:text-white mr-4"
+          className="bg-purple-500 text-white px-4 py-2 rounded dark:bg-purple-700 dark:text-white"
         >
-          Random Room Allot
+          Allot Random Rooms
         </button>
         <button
           onClick={randomPreferences}
           className="bg-yellow-500 text-white px-4 py-2 rounded dark:bg-yellow-700 dark:text-white"
         >
-          Random Preferences
+          Set Random Preferences
         </button>
       </div>
 
