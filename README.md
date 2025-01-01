@@ -48,7 +48,7 @@ Beyond hostel room allocation, this project can be applied to:
 ## 🖋 Acknowledgments  
 - TTC algorithm learnt during the **ACM Summer School on Algorithmic Game Theory** at IMSc.  
 - Featured in **IMSc's Outreach Newsletter**: [Read here](https://www.imsc.res.in/outreach/scicomm/2024/july/events/acm-agt/).
-- Credits to [Kahaan](https://github.com/orgs/digitlpark/people/Kahaan19) and [Tanvi](https://github.com/orgs/digitlpark/people/TANVII05) for the website logo.
+- Credits to [Kahaan](https://github.com/Kahaan19) and [Tanvi](https://github.com/TANVII05) for the website logo.
 
 # Development
 
