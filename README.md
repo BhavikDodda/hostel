@@ -1,47 +1,60 @@
-<p align="center">
-  <a href="https://nextjs-flask-starter.vercel.app/">
-    <img src="https://assets.vercel.com/image/upload/v1588805858/repositories/vercel/logo.png" height="96">
-    <h3 align="center">Next.js Flask Starter</h3>
-  </a>
-</p>
 
-<p align="center">Simple Next.js boilerplate that uses <a href="https://flask.palletsprojects.com/">Flask</a> as the API backend.</p>
+# 🏠 My Roomify  
 
-<br/>
+My Roomify is an interactive web application that implements the **Top Trading Cycle (TTC)** algorithm to optimize room allocations based on user preferences. Initially designed to address the challenges of hostel room swaps at SVNIT, this project has evolved into a powerful tool for solving similar allocation problems efficiently.  
 
-## Introduction
+## 🚀 Live Demo  
+Try it out here: [My Roomify](https://my-roomify.vercel.app/)  
+
+## 🎥 Demo Video  
+[Watch the demo](https://youtu.be/mcmyfdFp2SA)  
+
+## 📋 Features  
+- Input the number of rooms/participants.  
+- Specify initial room allocations and members' preference lists.  
+- Use TTC to compute optimal reallocations.  
+- Visualize intermediate envy-graphs and cycles.  
+- See before-and-after improvements in room assignments.  
+
+## 🧠 How It Works  
+The TTC algorithm solves the problem of matching participants to their preferred rooms by:  
+1. Collecting participants' preferences and initial allocations.  
+2. Iteratively removing cycles in envy-graphs to reallocate rooms.  
+3. Producing a **Pareto optimal**, **truthful**, and **core-selected** solution.  
+
+## 📈 Algorithm Properties  
+- **Truthfulness**: Participants have no incentive to lie about their preferences.  
+- **Pareto Optimality**: Ensures that no reallocation can make one participant better off without making another worse off.  
+- **Participation**: Guarantees participants receive at least as good an outcome as opting out.  
+- **Core Selection**: Ensures no subset of participants can create a better reallocation among themselves.  
+
+
+## 📊 Visualizations  
+My Roomify features **interactive envy-graphs** that allow users to:  
+- View envy relationships at each step.  
+- Hover over nodes to inspect details.  
+- Understand how cycles are eliminated and rooms are reassigned.  
+
+## 🌟 Applications  
+Beyond hostel room allocation, this project can be applied to:  
+- Course registrations.  
+- Resource assignments in organizations.  
+- Any scenario with n participants and n items, each with preferences.  
+
+## 🛠 Tech Stack  
+- **Frontend**: Next.js, React, D3.js for interactive graphs.  
+- **Backend**: Flask for API and TTC algorithm implementation.  
+
+## 🖋 Acknowledgments  
+- TTC algorithm learnt during the **ACM Summer School on Algorithmic Game Theory** at IMSc.  
+- Featured in **IMSc's Outreach Newsletter**: [Read here](https://www.imsc.res.in/outreach/scicomm/2024/july/events/acm-agt/).
+- Credits to [Kahaan](https://github.com/orgs/digitlpark/people/Kahaan19) and [Tanvi](https://github.com/orgs/digitlpark/people/TANVII05) for the website logo.
+
+# Development
 
 This is a hybrid Next.js + Python app that uses Next.js as the frontend and Flask as the API backend. One great use case of this is to write Next.js apps that use Python AI libraries on the backend.
 
-## How It Works
-
-The Python/Flask server is mapped into to Next.js app under `/api/`.
-
-This is implemented using [`next.config.js` rewrites](https://github.com/vercel/examples/blob/main/python/nextjs-flask/next.config.js) to map any request to `/api/:path*` to the Flask API, which is hosted in the `/api` folder.
-
-On localhost, the rewrite will be made to the `127.0.0.1:5328` port, which is where the Flask server is running.
-
-In production, the Flask server is hosted as [Python serverless functions](https://vercel.com/docs/concepts/functions/serverless-functions/runtimes/python) on Vercel.
-
-## Demo
-
-https://nextjs-flask-starter.vercel.app/
-
-## Deploy Your Own
-
-You can clone & deploy it to Vercel with one click:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?demo-title=Next.js%20Flask%20Starter&demo-description=Simple%20Next.js%20boilerplate%20that%20uses%20Flask%20as%20the%20API%20backend.&demo-url=https%3A%2F%2Fnextjs-flask-starter.vercel.app%2F&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F795TzKM3irWu6KBCUPpPz%2F44e0c6622097b1eea9b48f732bf75d08%2FCleanShot_2023-05-23_at_12.02.15.png&project-name=Next.js%20Flask%20Starter&repository-name=nextjs-flask-starter&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fexamples%2Ftree%2Fmain%2Fpython%2Fnextjs-flask&from=vercel-examples-repo)
-
-## Developing Locally
-
-You can clone & create this repo with the following command
-
-```bash
-npx create-next-app nextjs-flask --example "https://github.com/vercel/examples/tree/main/python/nextjs-flask"
-```
-
-## Getting Started
+## Getting Started Locally
 
 First, install the dependencies:
 
@@ -65,14 +78,27 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+Run the backend flask server with
+
+```bash
+python api/index.py
+```
+
 The Flask server will be running on [http://127.0.0.1:5328](http://127.0.0.1:5328) – feel free to change the port in `package.json` (you'll also need to update it in `next.config.js`).
 
-## Learn More
+## 🤝 Contributions  
+Contributions, issues, and feature requests are welcome!  
+1. Fork the repository.  
+2. Create a new branch (`git checkout -b feature-branch`).  
+3. Commit your changes (`git commit -m "Added feature XYZ"`).  
+4. Push to the branch (`git push origin feature-branch`).  
+5. Open a pull request.  
 
-To learn more about Next.js, take a look at the following resources:
+## 📧 Contact  
+If you have any ideas or suggestions, feel free to:  
+- Leave a comment.  
+- Open a GitHub issue.  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [Flask Documentation](https://flask.palletsprojects.com/en/1.1.x/) - learn about Flask features and API.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Thank you for checking out My Roomify! Let’s make room allocations efficient and fair for everyone! 😊
