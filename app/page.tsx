@@ -127,9 +127,40 @@ export default function Home() {
     document.documentElement.classList.toggle("dark", !darkMode);
   };
 
+  const FCFSallocateRooms = (order: number[]) => {
+    const prefList = preferences.map((p) =>
+      p.split(",").map((s) => parseInt(s.trim()))
+    );
+    const allocated = new Array(prefList.length).fill(null);
+    const takenRooms = new Set();
+      order.forEach(person => {
+      const personIndex = person - 1;
+      const preferenceList = prefList[personIndex];
+  
+      
+      for (let room of preferenceList) {
+        if (!takenRooms.has(room)) {
+          allocated[personIndex] = room;
+          takenRooms.add(room);
+          break;
+        }
+      }
+    });
+    console.log(prefList)
+    console.log(allocated);
+    return allocated;
+  }
+
   const randomRoomAllot = () => {
     if (rooms > 0) {
       const shuffledRooms = Array.from({ length: rooms }, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+      setRoomAllotments(shuffledRooms);
+    }
+  };
+
+  const fcfsRoomAllot = () => {
+    if (rooms > 0) {
+      const shuffledRooms = FCFSallocateRooms(Array.from({ length: rooms }, (_, i) => i + 1));
       setRoomAllotments(shuffledRooms);
     }
   };
@@ -229,6 +260,12 @@ export default function Home() {
           className="bg-purple-500 text-white px-4 py-2 rounded dark:bg-purple-700 dark:text-white"
         >
           Allot Random Rooms
+        </button>
+        <button
+          onClick={fcfsRoomAllot}
+          className="bg-teal-500 text-white px-4 py-2 rounded dark:bg-teal-700 dark:text-white"
+        >
+          Rooms FCFS
         </button>
         <button
           onClick={randomPreferences}
